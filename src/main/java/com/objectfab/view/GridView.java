@@ -2,7 +2,6 @@ package com.objectfab.view;
 
 import com.objectfab.model.API;
 import com.objectfab.model.Model;
-import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
@@ -23,6 +22,14 @@ public class GridView extends Region {
 
     public GridView(API api, int width, int height) {
         this.api = api;
+
+        api.updateEvents().subscribe(output -> {
+            paths.getChildren().clear();
+            for (Model.Point point : output.getPath()) {
+                paths.getChildren().add(new Path(point.getX(), point.getY(), SCALE, SCALE));
+            }
+        });
+
         this.width = width;
         this.height = height;
         map = new Cell[width*height];
@@ -69,18 +76,7 @@ public class GridView extends Region {
         update();
     }
 
-    protected void update() {
-        Model input = createModel();
-
-        api.update(input).thenAccept( output-> Platform.runLater(() -> {
-            paths.getChildren().clear();
-            for (Model.Point point : output.getPath()) {
-                paths.getChildren().add(new Path(point.getX(), point.getY(), SCALE, SCALE));
-            }
-        }));
-    }
-
-    private Model createModel() {
+    private void update() {
         Model model = new Model(width, height);
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
@@ -91,6 +87,6 @@ public class GridView extends Region {
             Waypoint waypoint = (Waypoint) node;
             model.addWaypoint(waypoint.getX(), waypoint.getY());
         }
-        return model;
+        api.update(model);
     }
 }
