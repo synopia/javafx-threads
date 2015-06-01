@@ -1,0 +1,27 @@
+# Toplevel
+/.gradle
+.gradle_home/
+
+# Build
+build/
+target/
+
+# Eclipse
+.project
+.settings
+.classpath
+
+# IDEA
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Build
+*.sha
+*.log
+*.epoch
+*.lck
+*.log.*
+
+
